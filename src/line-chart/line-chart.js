@@ -4,7 +4,8 @@ import {
   ScrollView,
   StyleSheet,
   Animated,
-  TextInput
+  TextInput,
+  Dimensions
 } from "react-native";
 import {
   Svg,
@@ -17,6 +18,9 @@ import {
 } from "react-native-svg";
 import AbstractChart from "../abstract-chart";
 import { LegendItem } from "./legend-item";
+
+const screenWidth = Dimensions.get('window').width;
+const scaleVal = screenWidth / 400;
 
 let AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -77,7 +81,7 @@ class LineChart extends AbstractChart {
           paddingRight + (i * (width - paddingRight)) / dataset.data.length;
         const cy =
           ((baseHeight - this.calcHeight(x, datas, height)) / 4) * 3 +
-          paddingTop;
+          paddingTop - 4;
         const onPress = () => {
           if (!onDataPointClick || hidePointsAtIndex.includes(i)) {
             return;
@@ -393,7 +397,7 @@ class LineChart extends AbstractChart {
     const baseHeight = this.calcBaseHeight(datas, height);
     const y = i => {
       const yHeight = this.calcHeight(dataset.data[i], datas, height);
-      return Math.floor(((baseHeight - yHeight) / 4) * 3 + paddingTop);
+      return Math.floor(((baseHeight - (yHeight + 5)) / 4) * 3 + paddingTop);
     };
 
     return [`M${x(0)},${y(0)}`]
@@ -434,8 +438,8 @@ class LineChart extends AbstractChart {
         this.getBezierLinePoints(dataset, config) +
         ` L${paddingRight +
           ((width - paddingRight) / dataset.data.length) *
-            (dataset.data.length - 1)},${(height / 4) * 3 +
-          paddingTop} L${paddingRight},${(height / 4) * 3 + paddingTop} Z`;
+            (dataset.data.length - 1)},${((height + (60 * scaleVal)) / 4) * 3 +
+          paddingTop} L${paddingRight},${((height + (60 * scaleVal)) / 4) * 3 + paddingTop} Z`;
       return (
         <Path
           key={index}
@@ -492,7 +496,7 @@ class LineChart extends AbstractChart {
     const {
       borderRadius = 0,
       paddingTop = 16,
-      paddingRight = 64,
+      paddingRight = 0,
       margin = 0,
       marginRight = 0,
       paddingBottom = 0

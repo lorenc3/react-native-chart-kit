@@ -12,30 +12,32 @@ class AbstractChart extends Component {
   };
 
   calcBaseHeight = (data, height) => {
-    const min = Math.min(...data);
-    const max = Math.max(...data);
+    const { graphData } = this.props;
+    const min = Math.min(...graphData);
+    const max = Math.max(...graphData);
     if (min >= 0 && max >= 0) {
       return height;
     } else if (min < 0 && max <= 0) {
       return 0;
     } else if (min < 0 && max > 0) {
-      return (height * max) / this.calcScaler(data);
+      return (height * max) / this.calcScaler(graphData);
     }
   };
 
   calcHeight = (val, data, height) => {
-    const max = Math.max(...data);
-    const min = Math.min(...data);
+    const { graphData } = this.props;
+    const max = Math.max(...graphData);
+    const min = Math.min(...graphData);
     if (min < 0 && max > 0) {
-      return height * (val / this.calcScaler(data));
+      return height * (val / this.calcScaler(graphData));
     } else if (min >= 0 && max >= 0) {
       return this.props.fromZero
-        ? height * (val / this.calcScaler(data))
-        : height * ((val - min) / this.calcScaler(data));
+        ? height * (val / this.calcScaler(graphData))
+        : height * ((val - min) / this.calcScaler(graphData));
     } else if (min < 0 && max <= 0) {
       return this.props.fromZero
-        ? height * (val / this.calcScaler(data))
-        : height * ((val - max) / this.calcScaler(data));
+        ? height * (val / this.calcScaler(graphData))
+        : height * ((val - max) / this.calcScaler(graphData));
     }
   };
 
@@ -109,7 +111,8 @@ class AbstractChart extends Component {
     const {
       yAxisLabel = "",
       yAxisSuffix = "",
-      yLabelsOffset = 12
+      yLabelsOffset = 12,
+      graphData
     } = this.props;
 
     return [...Array(count === 1 ? 1 : count + 1).keys()].map((i, _) => {
@@ -121,8 +124,8 @@ class AbstractChart extends Component {
         )}${yAxisSuffix}`;
       } else {
         const label = this.props.fromZero
-          ? (this.calcScaler(data) / count) * i + Math.min(...data, 0)
-          : (this.calcScaler(data) / count) * i + Math.min(...data);
+          ? (this.calcScaler(graphData) / count) * i + Math.min(...graphData, 0)
+          : (this.calcScaler(graphData) / count) * i + Math.min(...graphData);
         yLabel = `${yAxisLabel}${formatYLabel(
           label.toFixed(decimalPlaces)
         )}${yAxisSuffix}`;
